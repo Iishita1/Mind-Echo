@@ -1,175 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Today's Life Story</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(to bottom right, #1E3A8A, #6B7280);
-    color: #FFFFFF;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+{% extends "base.html" %}
 
-.container {
-    display: flex;
-    width: 90%;
-    max-width: 1200px;
-    height: 80vh;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    overflow: hidden;
-}
+{% block title %}Mind-Echo{% endblock %}
 
-.left-section {
-    width: 30%;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='landing01.css') }}">
+{% endblock %}
 
-.progress-bars {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.progress-bar label {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.bar {
-    background: #D1D5DB;
-    height: 20px;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.fill {
-    height: 100%;
-    background: linear-gradient(to right, #2DD4BF, #3B82F6);
-    transition: width 1s ease-in-out;
-}
-
-.happiness { width: 70%; }
-.anxiety { width: 30%; }
-.overall { width: 50%; }
-
-.user-input {
-    flex: 1;
-    background: #1F2937;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-}
-
-.user-input p {
-    font-family: 'Quicksand', sans-serif;
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-.user-input textarea {
-    width: 100%;
-    height: 100px;
-    background: transparent;
-    border: none;
-    color: #FFFFFF;
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    resize: vertical;
-}
-
-.right-section {
-    width: 70%;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-}
-
-.avatar-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.avatar {
-    width: 200px;
-    height: 300px;
-    background: url('avatar.png'); /* Replace with actual avatar image or SVG */
-    background-size: cover;
-    position: relative;
-    border-radius: 50%;
-    background: linear-gradient(circle, #3B82F6, #1E3A8A);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-}
-
-.life-story {
-    width: 300px;
-    background: #1F2937;
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #3B82F6;
-    max-height: 100%;
-    overflow-y: auto;
-}
-
-.life-story h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.life-story p {
-    font-size: 14px;
-}
-
-
-/* Avatar */
-@keyframes glow {
-    0% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.8; }
-}
-
-@keyframes handMove {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(5px); }
-    100% { transform: translateY(0); }
-}
-
-.avatar::before {
-    content: '';
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    background: radial-gradient(circle, #FFFFFF, #3B82F6);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: glow 3s infinite;
-}
-
-.avatar {
-    animation: handMove 2s infinite;
-}
-    </style>
-</head>
-<body>
+{% block content %}
     <div class="container">
         <!-- Left Section -->
         <div class="left-section">
@@ -211,7 +48,9 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    {% endblock %}
+
+{% block scripts %}
     <script>// Update progress bars dynamically (example values)
         document.addEventListener('DOMContentLoaded', () => {
             const happinessFill = document.querySelector('.happiness');
@@ -242,5 +81,5 @@
                 lifeStory.textContent = text ? `Today, you felt: ${text}` : 'Lorem ipsum dolor sit amet...';
             });
         });</script>
-</body>
-</html>
+        
+{% endblock %}
