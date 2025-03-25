@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindEcho - Mental Health Assessment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #4ecdc4;
+            --background: #0f172a;
+            --text-color: #e2e8f0;
+            --box-bg: rgba(30, 41, 59, 0.8);
+            --box-border: rgba(255,255,255,0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            min-height: 100vh;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+        .container h1{
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 5rem;
+        }
+
+        /* Sparkle effect */
+        .sparkle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            animation: sparkle 2s ease-out infinite;
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        h1 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #4ecdc4, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            letter-spacing: -0.5px;
+        }
+
+        .survey-container {
+            position: relative;
+            min-height: 500px;
+        }
+
+        .question-card {
+            background: var(--box-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            margin-top: 5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--box-border);
+            transition: all 0.3s ease;
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .question-card.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .question-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .option-label {
+            display: block;
+            padding: 1.25rem;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-color);
+        }
+
+        .option-label:hover {
+            background: rgba(30, 41, 59, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .option-label.selected {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: rgba(78, 205, 196, 0.5);
+            box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.3);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .progress-text {
+            text-align: right;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #6366f1);
+            transition: width 0.5s ease;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .nav-btn {
+            background: rgba(78, 205, 196, 0.1);
+            color: #4ecdc4;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1;
+        }
+
+        .nav-btn:hover {
+            background: rgba(78, 205, 196, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .save-next-btn {
+            background: linear-gradient(90deg, #4ecdc4, #6366f1);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            z-index: 1;
+        }
+
+        .save-next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .submit-btn {
+            background: linear-gradient(90deg, #4ecdc4, #6366f1);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 22rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .custom-response textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.7);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .custom-response textarea:focus {
+            outline: none;
+            border-color: rgba(78, 205, 196, 0.5);
+            box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .question-card {
+                padding: 1.5rem;
+            }
+            
+            .question-card h3 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mental Health Wellness Assessment</h1>
+        
+        <div class="progress-container">
+            <div class="progress-text" id="progressText">Question 1 of 10</div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+        </div>
+        
+        <form id="surveyForm" class="survey-container">
+            <!-- Question 1 -->
+            <div class="question-card active" data-question="1">
+                <h3>1. What brings you to MindEcho today?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="Stress management">
+                        Stress management
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="Anxiety relief">
+                        Anxiety relief
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="Depression support">
+                        Depression support
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="General mental wellness">
+                        General mental wellness
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-card" data-question="2">
+                <h3>2. How often have you felt down, depressed, or hopeless in the past two weeks?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="Not at all">
+                        Not at all
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="Several days">
+                        Several days
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="More than half the days">
+                        More than half the days
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="Nearly every day">
+                        Nearly every day
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-card" data-question="3">
+                <h3>3. How would you rate your current stress levels?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="No stress">
+                        No stress
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="Mild stress">
+                        Mild stress
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="Moderate stress">
+                        Moderate stress
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="Severe stress">
+                        Severe stress
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-card" data-question="4">
+                <h3>4. How often do you experience anxiety or panic attacks?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="Never">
+                        Never
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="Rarely">
+                        Rarely
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="Sometimes">
+                        Sometimes
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="Frequently">
+                        Frequently
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-card" data-question="5">
+                <h3>5. How is your sleep quality recently?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="Excellent">
+                        Excellent
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="Good">
+                        Good
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="Fair">
+                        Fair
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="Poor">
+                        Poor
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-card" data-question="6">
+                <h3>6. How often do you feel lonely or isolated?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="Never">
+                        Never
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="Occasionally">
+                        Occasionally
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="Often">
+                        Often
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="Constantly">
+                        Constantly
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-card" data-question="7">
+                <h3>7. How would you describe your ability to concentrate?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="Excellent">
+                        Excellent
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="Good">
+                        Good
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="Some difficulty">
+                        Some difficulty
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="Severe difficulty">
+                        Severe difficulty
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-card" data-question="8">
+                <h3>8. Have you experienced changes in your appetite recently?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="No change">
+                        No change
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="Increased appetite">
+                        Increased appetite
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="Decreased appetite">
+                        Decreased appetite
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="Fluctuates significantly">
+                        Fluctuates significantly
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-card" data-question="9">
+                <h3>9. How often do you engage in activities you enjoy?</h3>
+                <div class="options-grid">
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="Daily">
+                        Daily
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="Several times a week">
+                        Several times a week
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="Rarely">
+                        Rarely
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="Almost never">
+                        Almost never
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-card" data-question="10">
+                <h3>10. What would you most like to improve about your mental health?</h3>
+                <div class="custom-response">
+                    <textarea name="q10" placeholder="Please share what you hope to achieve through MindEcho..."></textarea>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button type="button" class="nav-btn prev-btn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                    Previous
+                </button>
+                <button type="button" class="save-next-btn next-btn">
+                    Save & Next
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn" style="display: none;">
+                Submit Assessment
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = document.querySelectorAll('.question-card');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            const submitBtn = document.getElementById('submitBtn');
+            const progressBar = document.getElementById('progress');
+            const progressText = document.getElementById('progressText');
+            let currentQuestion = 0;
+            const totalQuestions = questions.length;
+
+            // Create sparkle effects
+            function createSparkles() {
+                const container = document.querySelector('.container');
+                const sparkleCount = 20;
+                
+                for (let i = 0; i < sparkleCount; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.classList.add('sparkle');
+                    
+                    // Random position
+                    sparkle.style.left = `${Math.random() * 100}%`;
+                    sparkle.style.top = `${Math.random() * 100}%`;
+                    
+                    // Random delay
+                    sparkle.style.animationDelay = `${Math.random() * 2}s`;
+                    
+                    // Random size
+                    const size = Math.random() * 3 + 2;
+                    sparkle.style.width = `${size}px`;
+                    sparkle.style.height = `${size}px`;
+                    
+                    container.appendChild(sparkle);
+                }
+            }
+
+            createSparkles();
+
+            // Initialize progress
+            updateProgress();
+
+            // Option selection
+            document.querySelectorAll('.option-label').forEach(label => {
+                label.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (!radio.checked) {
+                        // Remove selected class from siblings
+                        const parent = this.closest('.options-grid');
+                        parent.querySelectorAll('.option-label').forEach(sibling => {
+                            sibling.classList.remove('selected');
+                        });
+                        
+                        // Add selected class to current
+                        this.classList.add('selected');
+                        radio.checked = true;
+                    }
+                });
+            });
+
+            // Next button click
+            nextBtn.addEventListener('click', function() {
+                if (currentQuestion < totalQuestions - 1) {
+                    // Validate current question has an answer if it's not the last one
+                    if (currentQuestion !== totalQuestions - 1) {
+                        const currentOptions = questions[currentQuestion].querySelectorAll('input[type="radio"]');
+                        const textArea = questions[currentQuestion].querySelector('textarea');
+                        
+                        if (currentOptions.length > 0) {
+                            let answered = false;
+                            currentOptions.forEach(option => {
+                                if (option.checked) answered = true;
+                            });
+                            
+                            if (!answered) {
+                                alert('Please select an option before continuing');
+                                return;
+                            }
+                        }
+                    }
+                    
+                    questions[currentQuestion].classList.remove('active');
+                    currentQuestion++;
+                    questions[currentQuestion].classList.add('active');
+                    updateNavButtons();
+                    updateProgress();
+                }
+            });
+
+            // Previous button click
+            prevBtn.addEventListener('click', function() {
+                if (currentQuestion > 0) {
+                    questions[currentQuestion].classList.remove('active');
+                    currentQuestion--;
+                    questions[currentQuestion].classList.add('active');
+                    updateNavButtons();
+                    updateProgress();
+                }
+            });
+
+            // Update navigation buttons
+            function updateNavButtons() {
+                prevBtn.disabled = currentQuestion === 0;
+                
+                if (currentQuestion === totalQuestions - 1) {
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'block';
+                } else {
+                    nextBtn.style.display = 'flex';
+                    submitBtn.style.display = 'none';
+                }
+            }
+
+            // Update progress bar
+            function updateProgress() {
+                const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `Question ${currentQuestion + 1} of ${totalQuestions}`;
+            }
+
+            // Form submission
+            document.getElementById('surveyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate last question if it's a textarea
+                const lastQuestion = questions[totalQuestions - 1];
+                const textArea = lastQuestion.querySelector('textarea');
+                if (textArea && textArea.value.trim() === '') {
+                    alert('Please share your thoughts before submitting');
+                    return;
+                }
+                
+                // Show success message
+                alert('Thank you for completing your mental health assessment. Your responses will help us provide better support.');
+                
+                // Here you would typically send the data to your server
+                // const formData = new FormData(this);
+                // fetch('/submit-assessment', { method: 'POST', body: formData });
+            });
+        });
+    </script>
+</body>
+</html>
