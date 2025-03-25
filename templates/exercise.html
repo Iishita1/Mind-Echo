@@ -73,7 +73,13 @@
       bottom: 0;
       width: 100%;
       background-color: #3b82f6;
-      transition: height 1s ease;
+      transition: height 0.5s ease;
+    }
+
+    .progress-value {
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
     }
 
     /* Avatar Section */
@@ -170,6 +176,12 @@
       outline: 2px solid white;
     }
 
+    .calendar-day.today {
+      background-color: #3b82f6;
+      color: white;
+      font-weight: bold;
+    }
+
     /* Sleep Tracker Widget */
     .sleep-form {
       display: flex;
@@ -205,6 +217,31 @@
       list-style: none;
       font-size: 12px;
       line-height: 1.5;
+    }
+
+    .exercise-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+
+    .exercise-item.completed {
+      color: #9ca3af;
+      text-decoration: line-through;
+    }
+
+    .exercise-checkbox {
+      cursor: pointer;
+    }
+
+    .exercise-delete {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: auto;
     }
 
     .exercise-form {
@@ -316,6 +353,7 @@
       <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
       </div>
+      <div class="progress-value" id="progressValue">75%</div>
       <div class="progress-label">
         <span>Progress</span>
       </div>
@@ -358,8 +396,16 @@
             <button class="add-btn" id="addExerciseBtn">+</button>
           </div>
           <ul class="exercise-list" id="exerciseList">
-            <li>Jumps 2 sets 15 mins</li>
-            <li>Squats 1 set 10 mins</li>
+            <li class="exercise-item">
+              <input type="checkbox" class="exercise-checkbox">
+              <span>Jumps 2 sets 15 mins</span>
+              <button class="exercise-delete">×</button>
+            </li>
+            <li class="exercise-item">
+              <input type="checkbox" class="exercise-checkbox">
+              <span>Squats 1 set 10 mins</span>
+              <button class="exercise-delete">×</button>
+            </li>
           </ul>
           <div class="exercise-form" id="exerciseForm" style="display: none;">
             <input type="text" class="exercise-input" id="exerciseName" placeholder="Exercise name">
@@ -385,19 +431,51 @@
   </div>
 
   <script>
-    // Initialize variables
-    const timeLimit = 60; // in minutes
-    let progress = 45; // in minutes
+    const MAX_PROGRESS = 100;
+    let progress = 75; // Initial progress value (percentage)
     let sleepHours = null;
     let exercises = [
-      { name: 'Jumps', sets: 2, duration: 15 },
-      { name: 'Squats', sets: 1, duration: 10 }
+      { name: 'Jumps', sets: 2, duration: 15, completed: false, weight: 15 },
+      { name: 'Squats', sets: 1, duration: 10, completed: false, weight: 10 }
     ];
     let highlightedDates = [7, 12, 17, 24];
     let selectedDate = null;
+    let todayDate = new Date().getDate();
+
+    // Update progress bar and value display
+    function updateProgress() {
+      // Start with base progress
+      let newProgress = 50; // Base value (50%)
+      
+      // Adjust based on sleep (8 hours is optimal)
+      if (sleepHours !== null) {
+        // Give +5% for each hour between 7-9, capped at +10%
+        const sleepBonus = Math.min(10, Math.max(0, (Math.min(sleepHours, 9) - 7) * 5));
+        newProgress += sleepBonus;
+      }
+      
+      // Adjust based on exercises
+      exercises.forEach(exercise => {
+        if (exercise.completed) {
+          // Completed exercises give full weight
+          newProgress += exercise.weight;
+        } else {
+          // Pending exercises reduce progress by half weight
+          newProgress -= exercise.weight * 0.5;
+        }
+      });
+      
+      // Ensure progress stays within bounds (0-100%)
+      progress = Math.max(0, Math.min(MAX_PROGRESS, Math.round(newProgress)));
+      
+      // Update UI
+      progressBar.style.height = `${progress}%`;
+      progressValue.textContent = `${progress}%`;
+    }
 
     // DOM Elements
     const progressBar = document.getElementById('progressBar');
+    const progressValue = document.getElementById('progressValue');
     const calendarGrid = document.getElementById('calendarGrid');
     const sleepForm = document.getElementById('sleepForm');
     const sleepInput = document.getElementById('sleepInput');
@@ -411,21 +489,39 @@
     const exerciseDuration = document.getElementById('exerciseDuration');
     const clockCanvas = document.getElementById('clockCanvas');
 
-    // Initialize Progress Bar
-    function updateProgressBar() {
-      const percentage = (progress / timeLimit) * 100;
-      progressBar.style.height = `${percentage}%`;
+    // Update progress bar and value display
+    function updateProgress() {
+      // Calculate progress based on exercises and sleep
+      let newProgress = 50; // Base value
+      
+      // Adjust based on exercises
+      exercises.forEach(exercise => {
+        if (exercise.completed) {
+          // Completed exercises increase progress
+          newProgress += exercise.weight;
+        } else {
+          // Pending exercises decrease progress slightly
+          newProgress -= exercise.weight * 0.3;
+        }
+      });
+      
+      // Adjust based on sleep (8 hours is optimal)
+      if (sleepHours !== null) {
+        const sleepEffect = Math.min(20, Math.max(-10, (sleepHours - 8) * 5));
+        newProgress += sleepEffect;
+      }
+      
+      // Ensure progress stays within bounds (0-100%)
+      progress = Math.max(0, Math.min(MAX_PROGRESS, newProgress));
+      
+      // Update UI
+      progressBar.style.height = `${progress}%`;
+      progressValue.textContent = `${Math.round(progress)}%`;
     }
 
-    // Simulate progress decreasing over time
-    function startProgressTimer() {
-      updateProgressBar();
-      setInterval(() => {
-        if (progress > 0) {
-          progress -= 1;
-          updateProgressBar();
-        }
-      }, 60000); // update every minute
+    // Initialize Progress Bar
+    function initProgress() {
+      updateProgress();
     }
 
     // Initialize Calendar
@@ -444,6 +540,7 @@
       const currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
+      document.getElementById('currentMonth').textContent = currentDate.toLocaleString('default', { month: 'long' });
       
       // Get first day of month and total days in month
       const firstDay = new Date(year, month, 1).getDay();
@@ -459,35 +556,50 @@
       for (let day = 1; day <= daysInMonth; day++) {
         const dayElement = document.createElement('div');
         dayElement.className = 'calendar-day';
-        if (highlightedDates.includes(day)) {
+        
+        // Highlight today's date
+        if (day === todayDate) {
+          dayElement.classList.add('today', 'selected');
+          selectedDate = day;
+        } else if (highlightedDates.includes(day)) {
           dayElement.classList.add('highlighted');
         }
+        
         dayElement.textContent = day;
-        dayElement.addEventListener('click', () => handleDateClick(day, dayElement));
+        
+        // Only add click handler if not today's date
+        if (day !== todayDate) {
+          dayElement.addEventListener('click', () => handleDateClick(day, dayElement));
+        }
+        
         calendarGrid.appendChild(dayElement);
       }
     }
 
     function handleDateClick(day, element) {
-      // Remove selected class from previously selected date
-      if (selectedDate) {
+      // Remove selected class from previously selected date (except today)
+      if (selectedDate && selectedDate !== todayDate) {
         const prevSelected = document.querySelector('.calendar-day.selected');
         if (prevSelected) {
           prevSelected.classList.remove('selected');
         }
       }
       
-      // Set new selected date
-      selectedDate = day;
-      element.classList.add('selected');
+      // Set new selected date (can't select today as it's always selected)
+      if (day !== todayDate) {
+        selectedDate = day;
+        element.classList.add('selected');
+      }
       
-      // Toggle highlighted status
-      if (highlightedDates.includes(day)) {
-        highlightedDates = highlightedDates.filter(d => d !== day);
-        element.classList.remove('highlighted');
-      } else {
-        highlightedDates.push(day);
-        element.classList.add('highlighted');
+      // Toggle highlighted status (can't highlight today)
+      if (day !== todayDate) {
+        if (highlightedDates.includes(day)) {
+          highlightedDates = highlightedDates.filter(d => d !== day);
+          element.classList.remove('highlighted');
+        } else {
+          highlightedDates.push(day);
+          element.classList.add('highlighted');
+        }
       }
     }
 
@@ -499,6 +611,7 @@
         if (!isNaN(hours) && hours >= 0 && hours <= 24) {
           sleepHours = hours;
           sleepInput.value = hours;
+          updateProgress();
         }
       });
     }
@@ -528,23 +641,57 @@
         const name = exerciseName.value.trim();
         const sets = parseInt(exerciseSets.value) || 1;
         const duration = parseInt(exerciseDuration.value) || 5;
+        const weight = Math.min(15, Math.max(5, sets + duration / 3)); // Calculate weight based on sets and duration
         
         if (name) {
-          exercises.push({ name, sets, duration });
+          exercises.push({ name, sets, duration, completed: false, weight });
           renderExercises();
           exerciseForm.style.display = 'none';
           exerciseList.style.display = 'block';
           addExerciseBtn.style.display = 'block';
           resetExerciseForm();
+          updateProgress();
         }
       });
     }
 
     function renderExercises() {
       exerciseList.innerHTML = '';
-      exercises.forEach(exercise => {
+      exercises.forEach((exercise, index) => {
         const li = document.createElement('li');
-        li.textContent = `${exercise.name} ${exercise.sets} ${exercise.sets > 1 ? 'sets' : 'set'} ${exercise.duration} mins`;
+        li.className = 'exercise-item';
+        if (exercise.completed) {
+          li.classList.add('completed');
+        }
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'exercise-checkbox';
+        checkbox.checked = exercise.completed;
+        checkbox.addEventListener('change', () => {
+          exercises[index].completed = checkbox.checked;
+          li.classList.toggle('completed', checkbox.checked);
+          updateProgress();
+        });
+        
+        const span = document.createElement('span');
+        span.textContent = `${exercise.name} ${exercise.sets} ${exercise.sets > 1 ? 'sets' : 'set'} ${exercise.duration} mins`;
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'exercise-delete';
+        deleteBtn.textContent = '×';
+        deleteBtn.addEventListener('click', () => {
+          const wasCompleted = exercises[index].completed;
+          exercises.splice(index, 1);
+          renderExercises();
+          if (!wasCompleted) {
+            updateProgress();
+          }
+        });
+        
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(deleteBtn);
         exerciseList.appendChild(li);
       });
     }
@@ -652,7 +799,7 @@
 
     // Initialize all components
     function init() {
-      startProgressTimer();
+      initProgress();
       initCalendar();
       initSleepTracker();
       initExercisePlanner();
