@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wellness Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+
+    .dashboard {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      border-radius: 24px;
+      background: linear-gradient(to right, #1a56db, #9333ea);
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 80px 1fr 1.5fr;
+      gap: 24px;
+    }
+
+    /* Progress Bar Section */
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .hourglass-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 4px;
+    }
+
+    .progress-container {
+      position: relative;
+      width: 40px;
+      height: 250px;
+      background-color: rgba(59, 130, 246, 0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background-color: #3b82f6;
+      transition: height 1s ease;
+    }
+
+    /* Avatar Section */
+    .avatar-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .avatar-container {
+      position: relative;
+      width: 240px;
+      height: 300px;
+      background-color: #9333ea;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .avatar-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Widgets Section */
+    .widgets-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .widget {
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      padding: 16px;
+      color: white;
+    }
+
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .widget-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Calendar Widget */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .day-name {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .calendar-day {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .calendar-day:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .calendar-day.highlighted {
+      background-color: #eab308;
+      color: black;
+    }
+
+    .calendar-day.selected {
+      outline: 2px solid white;
+    }
+
+    /* Sleep Tracker Widget */
+    .sleep-form {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .sleep-input {
+      width: 48px;
+      background-color: transparent;
+      border: 1px solid #6b7280;
+      border-radius: 4px;
+      color: white;
+      text-align: center;
+      padding: 4px;
+      outline: none;
+    }
+
+    .sleep-input:focus {
+      border-color: white;
+    }
+
+    /* Bottom Widgets Container */
+    .bottom-widgets {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Exercise Widget */
+    .exercise-list {
+      list-style: none;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .exercise-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .exercise-input {
+      background-color: #374151;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    .exercise-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .exercise-number {
+      width: 60px;
+    }
+
+    .exercise-label {
+      font-size: 12px;
+    }
+
+    .exercise-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .exercise-btn {
+      background-color: #2563eb;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .exercise-btn.cancel {
+      background-color: #4b5563;
+    }
+
+    .add-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Clock Widget */
+    .clock-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .clock-canvas {
+      border-radius: 50%;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .progress-section {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 40px;
+      }
+
+      .progress-bar {
+        height: 100% !important;
+        width: var(--progress-width);
+        left: 0;
+        bottom: 0;
+      }
+
+      .bottom-widgets {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Progress Bar Section -->
+    <div class="progress-section">
+      <div class="progress-label">
+        <svg class="hourglass-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 8H2m20 8H2M6 2v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2M6 22v-4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"></path>
+        </svg>
+        <span>Time Limit</span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-label">
+        <span>Progress</span>
+      </div>
+    </div>
+
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-container">
+        <img src="" alt="Wellness avatar" class="avatar-image">
+      </div>
+    </div>
+
+    <!-- Widgets Section -->
+    <div class="widgets-section">
+      <!-- Calendar Widget -->
+      <div class="widget" id="calendarWidget">
+        <div class="widget-header">
+          <h3 class="widget-title" id="currentMonth">May</h3>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+          <!-- Day names and calendar days will be inserted here by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Sleep Tracker Widget -->
+      <div class="widget">
+        <form class="sleep-form" id="sleepForm">
+          <span>Got</span>
+          <input type="text" class="sleep-input" id="sleepInput" placeholder="_">
+          <span>hours of sleep today</span>
+        </form>
+      </div>
+
+      <!-- Bottom Widgets Container -->
+      <div class="bottom-widgets">
+        <!-- Exercise Widget -->
+        <div class="widget" id="exerciseWidget">
+          <div class="widget-header">
+            <h3 class="widget-title">Exercises Planned</h3>
+            <button class="add-btn" id="addExerciseBtn">+</button>
+          </div>
+          <ul class="exercise-list" id="exerciseList">
+            <li>Jumps 2 sets 15 mins</li>
+            <li>Squats 1 set 10 mins</li>
+          </ul>
+          <div class="exercise-form" id="exerciseForm" style="display: none;">
+            <input type="text" class="exercise-input" id="exerciseName" placeholder="Exercise name">
+            <div class="exercise-row">
+              <input type="number" class="exercise-input exercise-number" id="exerciseSets" value="1" min="1">
+              <span class="exercise-label">sets</span>
+              <input type="number" class="exercise-input exercise-number" id="exerciseDuration" value="5" min="5">
+              <span class="exercise-label">mins</span>
+            </div>
+            <div class="exercise-buttons">
+              <button type="button" class="exercise-btn" id="saveExerciseBtn">Add</button>
+              <button type="button" class="exercise-btn cancel" id="cancelExerciseBtn">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clock Widget -->
+        <div class="widget clock-container">
+          <canvas id="clockCanvas" class="clock-canvas" width="150" height="150"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize variables
+    const timeLimit = 60; // in minutes
+    let progress = 45; // in minutes
+    let sleepHours = null;
+    let exercises = [
+      { name: 'Jumps', sets: 2, duration: 15 },
+      { name: 'Squats', sets: 1, duration: 10 }
+    ];
+    let highlightedDates = [7, 12, 17, 24];
+    let selectedDate = null;
+
+    // DOM Elements
+    const progressBar = document.getElementById('progressBar');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const sleepForm = document.getElementById('sleepForm');
+    const sleepInput = document.getElementById('sleepInput');
+    const exerciseList = document.getElementById('exerciseList');
+    const exerciseForm = document.getElementById('exerciseForm');
+    const addExerciseBtn = document.getElementById('addExerciseBtn');
+    const saveExerciseBtn = document.getElementById('saveExerciseBtn');
+    const cancelExerciseBtn = document.getElementById('cancelExerciseBtn');
+    const exerciseName = document.getElementById('exerciseName');
+    const exerciseSets = document.getElementById('exerciseSets');
+    const exerciseDuration = document.getElementById('exerciseDuration');
+    const clockCanvas = document.getElementById('clockCanvas');
+
+    // Initialize Progress Bar
+    function updateProgressBar() {
+      const percentage = (progress / timeLimit) * 100;
+      progressBar.style.height = `${percentage}%`;
+    }
+
+    // Simulate progress decreasing over time
+    function startProgressTimer() {
+      updateProgressBar();
+      setInterval(() => {
+        if (progress > 0) {
+          progress -= 1;
+          updateProgressBar();
+        }
+      }, 60000); // update every minute
+    }
+
+    // Initialize Calendar
+    function initCalendar() {
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      
+      // Add day names
+      dayNames.forEach(day => {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'day-name';
+        dayElement.textContent = day;
+        calendarGrid.appendChild(dayElement);
+      });
+      
+      // Get current date info
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      // Get first day of month and total days in month
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      // Add empty cells for days before the first day of the month
+      for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        calendarGrid.appendChild(emptyDay);
+      }
+      
+      // Add cells for each day of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        if (highlightedDates.includes(day)) {
+          dayElement.classList.add('highlighted');
+        }
+        dayElement.textContent = day;
+        dayElement.addEventListener('click', () => handleDateClick(day, dayElement));
+        calendarGrid.appendChild(dayElement);
+      }
+    }
+
+    function handleDateClick(day, element) {
+      // Remove selected class from previously selected date
+      if (selectedDate) {
+        const prevSelected = document.querySelector('.calendar-day.selected');
+        if (prevSelected) {
+          prevSelected.classList.remove('selected');
+        }
+      }
+      
+      // Set new selected date
+      selectedDate = day;
+      element.classList.add('selected');
+      
+      // Toggle highlighted status
+      if (highlightedDates.includes(day)) {
+        highlightedDates = highlightedDates.filter(d => d !== day);
+        element.classList.remove('highlighted');
+      } else {
+        highlightedDates.push(day);
+        element.classList.add('highlighted');
+      }
+    }
+
+    // Initialize Sleep Tracker
+    function initSleepTracker() {
+      sleepForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const hours = parseFloat(sleepInput.value);
+        if (!isNaN(hours) && hours >= 0 && hours <= 24) {
+          sleepHours = hours;
+          sleepInput.value = hours;
+        }
+      });
+    }
+
+    // Initialize Exercise Planner
+    function initExercisePlanner() {
+      // Render initial exercises
+      renderExercises();
+      
+      // Show exercise form when add button is clicked
+      addExerciseBtn.addEventListener('click', () => {
+        exerciseList.style.display = 'none';
+        exerciseForm.style.display = 'block';
+        addExerciseBtn.style.display = 'none';
+      });
+      
+      // Hide form when cancel button is clicked
+      cancelExerciseBtn.addEventListener('click', () => {
+        exerciseForm.style.display = 'none';
+        exerciseList.style.display = 'block';
+        addExerciseBtn.style.display = 'block';
+        resetExerciseForm();
+      });
+      
+      // Save new exercise
+      saveExerciseBtn.addEventListener('click', () => {
+        const name = exerciseName.value.trim();
+        const sets = parseInt(exerciseSets.value) || 1;
+        const duration = parseInt(exerciseDuration.value) || 5;
+        
+        if (name) {
+          exercises.push({ name, sets, duration });
+          renderExercises();
+          exerciseForm.style.display = 'none';
+          exerciseList.style.display = 'block';
+          addExerciseBtn.style.display = 'block';
+          resetExerciseForm();
+        }
+      });
+    }
+
+    function renderExercises() {
+      exerciseList.innerHTML = '';
+      exercises.forEach(exercise => {
+        const li = document.createElement('li');
+        li.textContent = `${exercise.name} ${exercise.sets} ${exercise.sets > 1 ? 'sets' : 'set'} ${exercise.duration} mins`;
+        exerciseList.appendChild(li);
+      });
+    }
+
+    function resetExerciseForm() {
+      exerciseName.value = '';
+      exerciseSets.value = '1';
+      exerciseDuration.value = '5';
+    }
+
+    // Initialize Clock
+    function initClock() {
+      const ctx = clockCanvas.getContext('2d');
+      
+      function drawClock() {
+        // Set canvas dimensions
+        const size = Math.min(clockCanvas.width, clockCanvas.height);
+        const centerX = size / 2;
+        const centerY = size / 2;
+        const radius = size * 0.4;
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, clockCanvas.width, clockCanvas.height);
+        
+        // Draw clock face
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = '#9c27b0'; // Purple color
+        ctx.fill();
+        
+        // Draw clock center
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        
+        // Draw hour marks
+        for (let i = 0; i < 12; i++) {
+          const angle = (i * Math.PI) / 6;
+          const x1 = centerX + (radius - 10) * Math.sin(angle);
+          const y1 = centerY - (radius - 10) * Math.cos(angle);
+          const x2 = centerX + radius * Math.sin(angle);
+          const y2 = centerY - radius * Math.cos(angle);
+          
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+        
+        // Get current time
+        const now = new Date();
+        const hours = now.getHours() % 12;
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        
+        // Draw hour hand
+        const hourAngle = (hours * Math.PI) / 6 + (minutes * Math.PI) / (6 * 60);
+        const hourHandLength = radius * 0.5;
+        const hourX = centerX + hourHandLength * Math.sin(hourAngle);
+        const hourY = centerY - hourHandLength * Math.cos(hourAngle);
+        
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(hourX, hourY);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        
+        // Draw minute hand
+        const minuteAngle = (minutes * Math.PI) / 30;
+        const minuteHandLength = radius * 0.7;
+        const minuteX = centerX + minuteHandLength * Math.sin(minuteAngle);
+        const minuteY = centerY - minuteHandLength * Math.cos(minuteAngle);
+        
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(minuteX, minuteY);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw second hand
+        const secondAngle = (seconds * Math.PI) / 30;
+        const secondHandLength = radius * 0.8;
+        const secondX = centerX + secondHandLength * Math.sin(secondAngle);
+        const secondY = centerY - secondHandLength * Math.cos(secondAngle);
+        
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(secondX, secondY);
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Call again on the next frame
+        requestAnimationFrame(drawClock);
+      }
+      
+      // Start the clock
+      drawClock();
+    }
+
+    // Initialize all components
+    function init() {
+      startProgressTimer();
+      initCalendar();
+      initSleepTracker();
+      initExercisePlanner();
+      initClock();
+    }
+
+    // Start the application
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

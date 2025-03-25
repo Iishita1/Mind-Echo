@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Existing styles (unchanged) */
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to bottom right, #1E3A8A, #A78BFA);
+    color: #FFFFFF;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    width: 90%;
+    max-width: 1200px;
+    height: 80vh;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.left-section {
+    width: 20%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.timer {
+    text-align: center;
+}
+
+.hourglass {
+    width: 60px;
+    height: 100px;
+    margin: 0 auto;
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 80% 40%, 20% 40%, 20% 60%, 80% 60%, 100% 100%, 0 100%);
+    background: transparent;
+    border: 2px solid #8B4513;
+}
+
+.sand-top, .sand-bottom {
+    position: absolute;
+    width: 40px;
+    left: 10px;
+    background: linear-gradient(#FFD700, #FFA500);
+    transition: height 0.1s linear;
+}
+
+.sand-top {
+    top: 10px;
+    height: 40px;
+    clip-path: polygon(0 100%, 50% 0, 100% 100%);
+}
+
+.sand-bottom {
+    bottom: 10px;
+    height: 0;
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+}
+
+.sand-flow {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #FFD700;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+@keyframes fall {
+    0% { transform: translate(-50%, -50%); opacity: 1; }
+    100% { transform: translate(-50%, 40px); opacity: 0; }
+}
+
+.sand-flow.active {
+    animation: fall 1s linear infinite;
+}
+
+.time-left {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.timer-controls button {
+    margin: 5px;
+    padding: 5px 10px;
+    background: #3B82F6;
+    border: none;
+    border-radius: 50%;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+#timer-input {
+    width: 60px;
+    margin: 10px 0;
+    padding: 5px;
+    background: #1F2937;
+    color: #FFFFFF;
+    border: 1px solid #3B82F6;
+    border-radius: 5px;
+}
+
+.progress-bar {
+    text-align: center;
+}
+
+.progress-bar label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.bar {
+    background: #D1D5DB;
+    width: 20px;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.fill {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(to top, #A78BFA, #3B82F6);
+    transition: height 1s ease-in-out;
+}
+
+.center-section {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar {
+    width: 200px;
+    height: 300px;
+    background: url('avatar.png');
+    background-size: cover;
+    position: relative;
+}
+
+.right-section {
+    width: 40%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.calendar {
+    background: #1F2937;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.calendar h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.calendar-grid div {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.calendar-grid div:hover {
+    background: #3B82F6;
+}
+
+.calendar-grid .current-day {
+    background: #F97316;
+}
+
+.calendar-grid .marked {
+    background: #10B981;
+}
+
+.sleep-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sleep-input label {
+    font-size: 14px;
+}
+
+#sleep-hours {
+    width: 50px;
+    background: #1F2937;
+    color: #FFFFFF;
+    border: 1px solid #3B82F6;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.clock {
+    width: 50px;
+    height: 50px;
+    background: #1F2937;
+    border-radius: 50%;
+    position: relative;
+}
+
+.sleep-fill {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(#3B82F6 0deg, #3B82F6 0deg, transparent 0deg);
+    border-radius: 50%;
+}
+
+.exercise-list {
+    background: #1F2937;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.exercise-list h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.exercise-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.exercise-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.exercise-list input:checked + span {
+    text-decoration: line-through;
+    color: #10B981;
+}
+
+@keyframes jumping-jacks {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes squats {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(20px); }
+    100% { transform: translateY(0); }
+}
+
+.avatar.jumping {
+    animation: jumping-jacks 1s infinite;
+}
+
+.avatar.squatting {
+    animation: squats 2s infinite;
+}
+
+/* Footer Styles */
+.footer {
+    background: linear-gradient(to bottom right, #1E3A8A, #A78BFA);
+    padding: 20px;
+    color: #FFFFFF;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    width: 100%;
+}
+
+.footer-divider {
+    height: 2px;
+    background: linear-gradient(to right, #3B82F6, #A78BFA);
+    margin-bottom: 20px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-links a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #3B82F6;
+}
+
+.footer-social {
+    display: flex;
+    gap: 10px;
+}
+
+.social-icon {
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    transition: transform 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: scale(1.2);
+}
+
+.social-icon.twitter {
+    background: url('twitter-icon.png'); /* Replace with actual icon */
+}
+
+.social-icon.instagram {
+    background: url('instagram-icon.png'); /* Replace with actual icon */
+}
+
+.social-icon.facebook {
+    background: url('facebook-icon.png'); /* Replace with actual icon */
+}
+
+.footer-copyright p {
+    font-size: 12px;
+    margin: 0;
+}
+
+.footer-theme-toggle button {
+    padding: 5px 10px;
+    background: #3B82F6;
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.footer-theme-toggle button:hover {
+    background: #A78BFA;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <div class="timer">
+                <h3>Time Limit</h3>
+                <div class="hourglass">
+                    <div class="sand-top"></div>
+                    <div class="sand-flow"></div>
+                    <div class="sand-bottom"></div>
+                </div>
+                <div class="time-left">Time Left: 00:00</div>
+                <input type="number" id="timer-input" placeholder="Minutes" min="1">
+                <div class="timer-controls">
+                    <button id="start-timer">Start</button>
+                    <button id="pause-timer">Pause</button>
+                    <button id="reset-timer">Reset</button>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <label>Progress</label>
+                <div class="bar">
+                    <div class="fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Section -->
+        <div class="center-section">
+            <div class="avatar"></div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <div class="calendar">
+                <h3>May</h3>
+                <div class="calendar-days">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                <div class="calendar-grid"></div>
+            </div>
+            <div class="sleep-input">
+                <label>Got <input type="number" id="sleep-hours" min="0" max="24"> hours of sleep today</label>
+                <div class="clock">
+                    <div class="sleep-fill"></div>
+                </div>
+            </div>
+            <div class="exercise-list">
+                <h3>Exercises Planned</h3>
+                <ul>
+                    <li><input type="checkbox" class="exercise-check"> Jumps 2 sets 15 mins</li>
+                    <li><input type="checkbox" class="exercise-check"> Squats 1 set 10 mins</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-divider"></div>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">Home</a>
+                <a href="#">About</a>
+                <a href="#">Settings</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-icon twitter"></a>
+                <a href="#" class="social-icon instagram"></a>
+                <a href="#" class="social-icon facebook"></a>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Fitness Tracker. All rights reserved.</p>
+            </div>
+            <div class="footer-theme-toggle">
+                <button id="theme-toggle">Toggle Theme</button>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    // Timer Elements
+    const sandTop = document.querySelector('.sand-top');
+    const sandBottom = document.querySelector('.sand-bottom');
+    const sandFlow = document.querySelector('.sand-flow');
+    const timerInput = document.getElementById('timer-input');
+    const timeLeftDisplay = document.querySelector('.time-left');
+    const startBtn = document.getElementById('start-timer');
+    const pauseBtn = document.getElementById('pause-timer');
+    const resetBtn = document.getElementById('reset-timer');
+
+    let timerInterval = null;
+    let totalTime = 0;
+    let timeLeft = 0;
+    let isRunning = false;
+
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const secs = (seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+    };
+
+    const updateTimer = () => {
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isRunning = false;
+            timeLeft = 0;
+            sandTop.style.height = '0';
+            sandBottom.style.height = '40px';
+            sandFlow.classList.remove('active');
+            timeLeftDisplay.textContent = 'Time Left: 00:00';
+            alert('Timer finished!');
+            return;
+        }
+
+        timeLeftDisplay.textContent = `Time Left: ${formatTime(timeLeft)}`;
+        const progress = (timeLeft / totalTime) * 100;
+        sandTop.style.height = `${progress * 0.4}px`;
+        sandBottom.style.height = `${(100 - progress) * 0.4}px`;
+        timeLeft--;
+    };
+
+    startBtn.addEventListener('click', () => {
+        if (isRunning) return;
+
+        const inputMinutes = parseInt(timerInput.value);
+        if (isNaN(inputMinutes) || inputMinutes <= 0) {
+            alert('Please enter a valid number of minutes (greater than 0).');
+            return;
+        }
+
+        totalTime = inputMinutes * 60;
+        timeLeft = totalTime;
+        isRunning = true;
+
+        sandTop.style.height = '40px';
+        sandBottom.style.height = '0';
+        sandFlow.classList.add('active');
+
+        timerInterval = setInterval(updateTimer, 1000);
+    });
+
+    pauseBtn.addEventListener('click', () => {
+        if (!isRunning) return;
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isRunning = false;
+        sandFlow.classList.remove('active');
+    });
+
+    resetBtn.addEventListener('click', () => {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isRunning = false;
+        timeLeft = 0;
+        totalTime = 0;
+        sandTop.style.height = '40px';
+        sandBottom.style.height = '0';
+        sandFlow.classList.remove('active');
+        timeLeftDisplay.textContent = 'Time Left: 00:00';
+        timerInput.value = '';
+    });
+
+    // Progress Bar and Exercise List
+    const progressFill = document.querySelector('.fill');
+    const exerciseChecks = document.querySelectorAll('.exercise-check');
+    const updateProgress = () => {
+        const total = exerciseChecks.length;
+        const completed = Array.from(exerciseChecks).filter(check => check.checked).length;
+        progressFill.style.height = `${(completed / total) * 100}%`;
+    };
+
+    exerciseChecks.forEach(check => {
+        check.addEventListener('change', () => {
+            updateProgress();
+            animateAvatar();
+        });
+    });
+
+    // Avatar Animation
+    const avatar = document.querySelector('.avatar');
+    let currentExercise = 0;
+    const exercises = ['jumping', 'squatting'];
+
+    const animateAvatar = () => {
+        avatar.className = 'avatar';
+        avatar.classList.add(exercises[currentExercise]);
+        currentExercise = (currentExercise + 1) % exercises.length;
+    };
+
+    // Calendar
+    const calendarGrid = document.querySelector('.calendar-grid');
+    const daysInMonth = 31;
+    const firstDay = new Date(2025, 4, 1).getDay();
+
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        calendarGrid.appendChild(emptyDay);
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const day = document.createElement('div');
+        day.textContent = i;
+        if (i === 17) day.classList.add('current-day');
+        day.addEventListener('click', () => {
+            day.classList.toggle('marked');
+        });
+        calendarGrid.appendChild(day);
+    }
+
+    // Sleep Input and Clock
+    const sleepHours = document.getElementById('sleep-hours');
+    const sleepFill = document.querySelector('.sleep-fill');
+    sleepHours.addEventListener('input', () => {
+        const hours = parseInt(sleepHours.value) || 0;
+        const degrees = (hours / 24) * 360;
+        sleepFill.style.background = `conic-gradient(#3B82F6 0deg, #3B82F6 ${degrees}deg, transparent ${degrees}deg)`;
+    });
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    let isDarkTheme = true;
+
+    themeToggle.addEventListener('click', () => {
+        if (isDarkTheme) {
+            document.body.style.background = 'linear-gradient(to bottom right, #E0F7FA, #F3E8FF)';
+            document.querySelector('.container').style.background = 'rgba(255, 255, 255, 0.3)';
+            document.querySelector('.footer').style.background = 'linear-gradient(to bottom right, #E0F7FA, #F3E8FF)';
+            document.querySelectorAll('.calendar, .exercise-list, .sleep-input input, .timer input').forEach(el => {
+                el.style.background = '#FFFFFF';
+                el.style.color = '#1E3A8A';
+            });
+            document.querySelectorAll('h3, label, p, a').forEach(el => {
+                el.style.color = '#1E3A8A';
+            });
+        } else {
+            document.body.style.background = 'linear-gradient(to bottom right, #1E3A8A, #A78BFA)';
+            document.querySelector('.container').style.background = 'rgba(0, 0, 0, 0.3)';
+            document.querySelector('.footer').style.background = 'linear-gradient(to bottom right, #1E3A8A, #A78BFA)';
+            document.querySelectorAll('.calendar, .exercise-list, .sleep-input input, .timer input').forEach(el => {
+                el.style.background = '#1F2937';
+                el.style.color = '#FFFFFF';
+            });
+            document.querySelectorAll('h3, label, p, a').forEach(el => {
+                el.style.color = '#FFFFFF';
+            });
+        }
+        isDarkTheme = !isDarkTheme;
+        themeToggle.textContent = isDarkTheme ? 'Toggle Theme (Light)' : 'Toggle Theme (Dark)';
+    });
+});
+    </script>
+</body>
+</html>
