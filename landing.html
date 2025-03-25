@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MindEcho - Your Mental Health Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(140deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            perspective: 1000px;
+            overflow-x: hidden;
+        }
+        .particle {
+            position: fixed;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            z-index: -10;
+            animation: float-particles 10s infinite alternate;
+        }
+        @keyframes float-particles {
+            0% { transform: translateY(0) scale(0.5); }
+            100% { transform: translateY(-100px) scale(1); }
+        }
+        .floating-element {
+            transition: all 2s ease;
+            transform-style: preserve-3d;
+        }
+        .floating-image {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 25px 50px -12px rgba(165, 180, 252, 0.25);
+        }
+        .cta-gradient {
+            background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #a855f7 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #a855f7 0%, #6366f1 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .section-title:hover::after {
+            transform: scaleX(1);
+        }
+        .btn-ocean::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(56,182,255,0.8) 0%, rgba(0,116,217,0.8) 100%);
+            transition: width 0.4s ease-in-out;
+            z-index: 1;
+        }
+
+        .btn-ocean:hover::before {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white font-sans">
+    <!-- Particle Background -->
+    <div id="particle-container" class="fixed inset-0 z-[-1] overflow-hidden"></div>
+
+    <div class="container mx-auto px-4 sm:px-6 relative z-10">
+        <!-- Navigation -->
+        <nav class="flex justify-between items-center py-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <span class="text-2xl">🧠</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-wider">MindEcho</h1>
+            </div>
+            <div class="space-x-2 sm:space-x-4">
+                <button class="btn-ocean relative overflow-hidden bg-white/20 backdrop-blur-lg px-3 sm:px-4 py-2 rounded-full hover:bg-white/30 transition text-sm sm:text-base">
+                    <span class="relative z-10">Log In</span>
+                </button>
+                <button class="btn-ocean relative overflow-hidden bg-white/30 backdrop-blur-lg px-3 sm:px-4 py-2 rounded-full hover:bg-white/40 transition text-sm sm:text-base">
+                    <span class="relative z-10">Get Started</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="grid md:grid-cols-2 gap-12 items-center mt-12 md:mt-24 relative">
+            <div class="space-y-6 floating-element order-2 md:order-1">
+                <h2 class="text-4xl sm:text-5xl font-extrabold leading-tight">
+                    Decode Your <br/><span class="gradient-text">Emotional Landscape</span>
+                </h2>
+                <p class="text-lg sm:text-xl opacity-80">
+                    MindEcho transforms mental health support through personalized AI-driven insights and compassionate technology.
+                </p>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                            </svg>
+                        </div>
+                        <span>Intelligent Mood Tracking</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M7 2a1 1 0 00-.707 1.707L7 4.414v3.172a1 1 0 00.293.707l5 5A1 1 0 0013 13h3.172l1.414 1.414A1 1 0 0019 13.414V9a1 1 0 00-.293-.707l-5-5A1 1 0 0013 3H7zm2 6V4h4v2a1 1 0 001 1h2v2h-2a1 1 0 00-1 1v2h-2v-2a1 1 0 00-1-1H5V8h2a1 1 0 001-1z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span>AI Companion Support</span>
+                    </div>
+                </div>
+                <button class="mt-6 cta-gradient px-6 py-3 rounded-full font-semibold hover:opacity-90 transition transform hover:scale-105">
+                    Begin Your Emotional Journey
+                </button>
+            </div>
+
+            <!-- 3D Avatar Section -->
+            <div class="relative floating-element order-1 md:order-2 mb-12 md:mb-0">
+                <div class="w-full aspect-square bg-white/10 rounded-2xl absolute inset-0 -rotate-6"></div>
+                <div class="w-full aspect-square bg-white/20 rounded-2xl absolute inset-0 rotate-6"></div>
+                <div class="relative z-10 rounded-2xl shadow-2xl overflow-hidden aspect-square bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
+                    <div class="text-center p-6">
+                        <span class="text-8xl">🤖</span>
+                        <p class="mt-4 text-white/80">Your AI Companion</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="py-24">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl sm:text-5xl font-bold mb-6 section-title">ABOUT US</h2>
+                <div class="max-w-3xl mx-auto">
+                    <p class="text-lg sm:text-xl opacity-90 leading-relaxed">
+                        At MindEcho, we believe mental health care should be as unique as you are. Founded by a team of psychologists and AI experts, we bridge cutting-edge technology with clinically proven techniques to create a companion that listens, adapts, and grows with you—because healing isn’t one-size-fits-all.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Exercise Trainer -->
+                <div class="feature-card bg-white/10 p-8 rounded-2xl backdrop-blur-lg relative overflow-hidden">
+                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full filter blur-3xl"></div>
+                    <h3 class="text-2xl sm:text-3xl font-bold mb-6 gradient-text" style=" font-size: 2.5rem;line-height: 3.5rem;">Therapeutic Tools, Tailored to You</h3>
+                    <p class="text-gray-300 mb-6" style="font-size: 1.2rem;line-height: 2.2rem;">
+                        Say goodbye to generic exercises. MindEcho’s AI crafts bite-sized therapy activities based on your mood, goals, and progress—whether you need CBT techniques, mindfulness prompts, or resilience-building challenges. It’s like having a personal therapist curating your growth journey.
+                    </p>
+                    <div class="floating-image w-full h-48 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
+                        <span class="text-6xl">🌱</span>
+                    </div>
+                </div>
+
+                <!-- Your Day In a Short -->
+                <div class="feature-card bg-white/10 p-8 rounded-2xl backdrop-blur-lg relative overflow-hidden">
+                    <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-500/20 rounded-full filter blur-3xl"></div>
+                    <h1 class="text-2xl sm:text-3xl font-bold mb-6 gradient-text" style=" font-size: 2.5rem;line-height: 3.5rem;">Mood Tracking with Meaning</h1>
+                    <p class="text-gray-300 mb-6" style="font-size: 1.2rem;line-height: 2.2rem;">
+                        Track your emotions effortlessly and uncover patterns with AI-driven insights. MindEcho analyzes your entries to reveal triggers, growth areas, and even subtle wins you might miss—turning daily check-ins into a roadmap for self-discovery.
+                    </p>
+                    <div class="floating-image w-full h-48 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <span class="text-6xl">📊</span>
+                    </div>
+                </div>
+
+                <!-- Personalized Avatar -->
+                <div class="feature-card bg-white/10 p-8 rounded-2xl backdrop-blur-lg relative overflow-hidden md:col-span-2" style="z-index: 1000;">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div style="margin-right: 5rem; margin-left: 2rem;">
+                            <h3 class="text-2xl sm:text-3xl font-bold mb-6 gradient-text" style=" font-size: 3.5rem; line-height: 7rem;">Your AI Confidant</h3>
+                            <p class="text-gray-300" style="font-size: 1.3rem;line-height: 3rem;">
+                                Meet your always-available support system: a personalized AI avatar that learns your communication style, remembers your struggles, and responds with empathy—not scripts. Vent, celebrate, or sit in silence; it’s judgment-free companionship designed to feel human.
+                            </p>
+                        </div>
+                        <!-- Spline 3D Background -->
+                        <div class="spline-container" style="margin-left: 7rem;">
+                            <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.81/build/spline-viewer.js"></script>
+                            <spline-viewer 
+                                url="https://prod.spline.design/6pJtsRUJO1hpelEU/scene.splinecode"
+                                loading-anim
+                                events-target="global"
+                                style="width: 100%; height: 100%;"
+                            ></spline-viewer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-16">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">How MindEcho Helps You</h2>
+                <p class="text-lg text-white/80 max-w-2xl mx-auto">A comprehensive approach to mental wellness</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card bg-white/5 p-8 rounded-2xl backdrop-blur-lg">
+                    <div class="w-16 h-16 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-3xl">📖</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Therapeutic Stories</h3>
+                    <p class="text-gray-300">Personalized narratives that help you see your challenges from new perspectives and find your own solutions.</p>
+                </div>
+                
+                <div class="feature-card bg-white/5 p-8 rounded-2xl backdrop-blur-lg">
+                    <div class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-3xl">🎯</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Goal Tracking</h3>
+                    <p class="text-gray-300">Set and achieve mental health milestones with our guided progress system.</p>
+                </div>
+                
+                <div class="feature-card bg-white/5 p-8 rounded-2xl backdrop-blur-lg">
+                    <div class="w-16 h-16 bg-pink-500/20 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-3xl">👥</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Avatar Therapy</h3>
+                    <p class="text-gray-300">Interact with your personalized avatar for judgment-free conversations anytime.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-24 text-center">
+            <div class="bg-gradient-to-r from-purple-900/40 to-blue-900/40 rounded-3xl p-8 sm:p-12 backdrop-blur-lg max-w-4xl mx-auto">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-6">Ready to Transform Your Mental Health?</h2>
+                <p class="text-lg text-white/80 mb-8 max-w-2xl mx-auto">Join thousands who have discovered a better way to understand and improve their emotional wellbeing.</p>
+                <button class="cta-gradient px-8 py-4 rounded-full font-semibold hover:opacity-90 transition transform hover:scale-105 text-lg">
+                    Get Started for Free
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-12 border-t border-white/10">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-4 mb-6 md:mb-0">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        <span class="text-xl">🧠</span>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-wider">MindEcho</h1>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-purple-300 transition">Privacy</a>
+                    <a href="#" class="hover:text-purple-300 transition">Terms</a>
+                    <a href="#" class="hover:text-purple-300 transition">Contact</a>
+                </div>
+            </div>
+            <div class="mt-8 text-center text-white/50 text-sm">
+                © 2023 MindEcho. All rights reserved.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Particle Background Generation
+        function createParticles() {
+            const container = document.getElementById('particle-container');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.width = `${Math.random() * 20 + 5}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Animate about section on scroll
+        gsap.from("#about", {
+            scrollTrigger: {
+                trigger: "#about",
+                start: "top 75%",
+                toggleActions: "play none none none"
+            },
+            opacity: 1,
+            y: 50,
+            duration: 3,
+            ease: "power2.out"
+        });
+
+        // Animate feature cards
+        gsap.from(".feature-card", {
+            scrollTrigger: {
+                trigger: ".feature-card",
+                start: "top 80%",
+                toggleActions: "play none none none"
+            },
+            opacity: 1,
+            y: 30,
+            stagger: 0.2,
+            duration: 0.8,
+            ease: "back.out"
+        });
+
+        // Floating Elements Animation
+        gsap.to(".floating-element", {
+            y: 20,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+
+        // Hover effect for section title underline
+        document.querySelectorAll('.section-title').forEach(title => {
+            title.addEventListener('mouseenter', () => {
+                gsap.to(title.querySelector('::after'), {
+                    scaleX: 1,
+                    duration: 0.5
+                });
+            });
+        });
+    </script>
+</body>
+</html>
