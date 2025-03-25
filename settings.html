@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+    <style>
+        :root {
+            --dark-bg: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff758c 100%);
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #ff758c;
+            --text-color: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --border-radius: 16px;
+            --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            background-attachment: fixed;
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        /* 3D Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .bg-shape {
+            position: absolute;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: float 15s infinite linear;
+            opacity: 0.5;
+        }
+
+        .bg-shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 20%;
+            left: 10%;
+            animation-duration: 20s;
+            animation-delay: 0s;
+        }
+
+        .bg-shape:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            top: 60%;
+            left: 70%;
+            animation-duration: 25s;
+            animation-delay: 5s;
+        }
+
+        .bg-shape:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            top: 30%;
+            left: 50%;
+            animation-duration: 18s;
+            animation-delay: 2s;
+        }
+
+        .bg-shape:nth-child(4) {
+            width: 350px;
+            height: 350px;
+            top: 70%;
+            left: 20%;
+            animation-duration: 22s;
+            animation-delay: 7s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(100px, 0) rotate(180deg);
+            }
+            75% {
+                transform: translate(50px, -50px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        /* Dark overlay to ensure text readability */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.95) 0%, 
+                rgba(15, 23, 42, 0.85) 100%);
+            z-index: -1;
+        }
+
+        .header {
+            padding: 20px 0;
+            margin-bottom: 30px;
+            color: var(--text-color);
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-shadow: 0 2px 10px rgba(129, 140, 248, 0.3);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .header span {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .profile-image-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+            height: 400px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            transition: var(--transition);
+        }
+
+        .profile-image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(129, 140, 248, 0.2);
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .profile-image-card:hover .profile-image {
+            transform: scale(1.03);
+        }
+
+        .user-info-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(129, 140, 248, 0.1);
+            transition: var(--transition);
+        }
+
+        .user-info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(129, 140, 248, 0.2);
+        }
+
+        .user-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+
+        .user-quote {
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 1rem;
+            padding: 0 15px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .user-quote::before, .user-quote::after {
+            content: '"';
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            opacity: 0.5;
+            position: absolute;
+            transition: var(--transition);
+        }
+
+        .user-quote::before {
+            left: 0;
+            top: -10px;
+        }
+
+        .user-quote::after {
+            right: 0;
+            bottom: -20px;
+        }
+
+        .user-info-card:hover .user-quote::before,
+        .user-info-card:hover .user-quote::after {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+
+        .social-bio-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 50px;
+            padding-bottom:80px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(129, 140, 248, 0.1);
+            transition: var(--transition);
+        }
+
+        .social-bio-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(167, 139, 250, 0.2);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: var(--transition);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-icon:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-icon i {
+            transition: var(--transition);
+        }
+
+        .social-icon:hover i {
+            transform: scale(1.2);
+        }
+
+        .social-icon.facebook {
+            background-color: #3b5998;
+            color: white;
+        }
+
+        .social-icon.twitter {
+            background-color: #1DA1F2;
+            color: white;
+        }
+
+        .social-icon.instagram {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+        }
+
+        .social-icon.linkedin {
+            background-color: #0077B5;
+            color: white;
+        }
+
+        .short-bio {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+            transition: var(--transition);
+        }
+
+        .social-bio-card:hover .short-bio {
+            color: var(--text-color);
+        }
+
+        .profile-details-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(129, 140, 248, 0.1);
+            transition: var(--transition);
+        }
+
+        .profile-details-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(129, 140, 248, 0.25);
+        }
+
+        .profile-details-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, 
+                rgba(129, 140, 248, 0.1) 0%, 
+                transparent 70%);
+            animation: rotate 15s linear infinite;
+            z-index: -1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+            background-color: rgba(15, 23, 42, 0.7);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(129, 140, 248, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(129, 140, 248, 0.4);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            transition: var(--transition);
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(129, 140, 248, 0.1);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(129, 140, 248, 0.25);
+        }
+
+        .stat-title {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .stat-change {
+            font-size: 1rem;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .stat-change.positive {
+            color: #4ade80;
+        }
+
+        .stat-change.negative {
+            color: #f87171;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover .stat-label {
+            color: var(--text-color);
+        }
+
+        .chart {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 60px;
+            opacity: 0.3;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover .chart {
+            opacity: 0.5;
+        }
+
+        /* Animations */
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Pulse animation for stats */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .stat-card:hover .stat-value {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .bg-shape {
+                display: none;
+            }
+        }
+
+        
+        @keyframes aiWalk {
+            100% { background-position: -900px 0; }
+        }
+
+        .ai-character:hover {
+            animation: aiTalk 0.8s steps(6) infinite;
+        }
+
+        @keyframes aiTalk {
+            100% { background-position: -900px -150px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="ai-character" style="width: 200px; height: 200px; position: absolute; bottom: 20px; right: 20px;"></div>
+
+    <div class="ai-character"></div>
+    <!-- 3D Background Elements -->
+    <div class="bg-pattern">
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+    </div>
+
+    <!-- <div class="profile-container">
+        <div class="header">
+            The User Profile / <span>Personality Dashboard</span>
+        </div> -->
+        
+        <div class="profile-content">
+            <div class="left-column">
+                <div class="profile-image-card">
+                    <img src="https://images.unsplash.com/photo-1507019403270-cca502add9f8?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Z2lybCUyMHByb2ZpbGV8ZW58MHx8MHx8fDA%3D" alt="Profile" class="profile-image">
+                </div>
+                
+                <div class="user-info-card">
+                    <h2 class="user-name" id="displayName">Kashvi</h2>
+                    <p class="short-bio" style="font-size: 1.2rem;">I'm a creative professional passionate about design and technology.</p>
+                </div>
+                
+                <div class="social-bio-card">
+                    <p class="user-quote" style="font-size: 1.7rem;">The future belongs to those who believe in the beauty of their dreams.</p>
+                    <div class="social-links" style="margin-top: 3rem; margin-bottom: 0rem;">
+                        <a href="#" class="social-icon facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-icon twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-icon instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-icon linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-details-card">
+                <form id="userDetailsForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Your full name" >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="your.email@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+1 234 567 890">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" class="form-control" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="birthday">Birthday</label>
+                        <input type="date" id="birthday" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" class="form-control">
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="nonbinary">Non-binary</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" class="form-control" placeholder="Your address">
+                    </div>
+                    
+                    <button type="submit" class="btn">Save Details</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-title">Happiness</div>
+                <div class="stat-value">
+                    89 <span class="stat-change positive"><i class="fas fa-caret-up"></i> 12%</span>
+                </div>
+                <div class="stat-label">Above average</div>
+                <div class="chart">
+                    <svg width="100%" height="100%" viewBox="0 0 200 60" preserveAspectRatio="none">
+                        <path d="M0,60 Q40,30 70,40 T150,20 L200,10 V60 H0" fill="rgba(74, 222, 128, 0.3)"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">Stress</div>
+                <div class="stat-value">
+                    62 <span class="stat-change positive"><i class="fas fa-caret-up"></i> 4%</span>
+                </div>
+                <div class="stat-label">Slightly above average</div>
+                <div class="chart">
+                    <svg width="100%" height="100%" viewBox="0 0 200 60" preserveAspectRatio="none">
+                        <path d="M0,30 Q30,35 60,25 T120,35 L200,15 V60 H0" fill="rgba(248, 113, 113, 0.3)"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">Mood</div>
+                <div class="stat-value">
+                    31 <span class="stat-change negative"><i class="fas fa-caret-down"></i> 12%</span>
+                </div>
+                <div class="stat-label">Below average</div>
+                <div class="chart">
+                    <svg width="100%" height="100%" viewBox="0 0 200 60" preserveAspectRatio="none">
+                        <path d="M0,20 Q40,40 80,30 T160,40 L200,35 V60 H0" fill="rgba(244, 114, 182, 0.3)"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('userDetailsForm');
+            const displayName = document.getElementById('displayName');
+            const shortBio = document.querySelector('.short-bio');
+            
+            // Load any saved data
+            loadUserData();
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const bio = document.getElementById('bio').value;
+                const birthday = document.getElementById('birthday').value;
+                const gender = document.getElementById('gender').value;
+                const address = document.getElementById('address').value;
+                
+                // Simple validation
+                if (!name || !email) {
+                    alert('Please enter your name and email');
+                    return;
+                }
+                
+                // Save to localStorage
+                const userData = {
+                    name,
+                    email,
+                    phone,
+                    bio,
+                    birthday,
+                    gender,
+                    address
+                };
+                
+                localStorage.setItem('userData', JSON.stringify(userData));
+                
+                // Update displayed name with animation
+                displayName.style.transform = 'scale(1.1)';
+                displayName.style.color = '#f472b6';
+                setTimeout(() => {
+                    displayName.style.transform = 'scale(1)';
+                    displayName.style.color = '';
+                }, 500);
+                displayName.textContent = name;
+                
+                // Update short bio if provided
+                if (bio) {
+                    shortBio.style.transform = 'translateY(-5px)';
+                    shortBio.style.opacity = '0';
+                    setTimeout(() => {
+                        shortBio.textContent = bio.length > 70 ? bio.substring(0, 67) + '...' : bio;
+                        shortBio.style.transform = 'translateY(0)';
+                        shortBio.style.opacity = '1';
+                    }, 300);
+                }
+                
+                // Create a confirmation effect
+                const btn = document.querySelector('.btn');
+                btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                setTimeout(() => {
+                    btn.innerHTML = 'Save Details';
+                }, 2000);
+            });
+            
+            // Function to load user data from localStorage
+            function loadUserData() {
+                const savedData = localStorage.getItem('userData');
+                
+                if (savedData) {
+                    const userData = JSON.parse(savedData);
+                    
+                    if (userData.name) document.getElementById('name').value = userData.name;
+                    if (userData.email) document.getElementById('email').value = userData.email;
+                    if (userData.phone) document.getElementById('phone').value = userData.phone;
+                    if (userData.bio) document.getElementById('bio').value = userData.bio;
+                    if (userData.birthday) document.getElementById('birthday').value = userData.birthday;
+                    if (userData.gender) document.getElementById('gender').value = userData.gender;
+                    if (userData.address) document.getElementById('address').value = userData.address;
+                    
+                    // Update displayed name
+                    if (userData.name) {
+                        displayName.textContent = userData.name;
+                    }
+                    
+                    // Update short bio
+                    if (userData.bio) {
+                        shortBio.textContent = userData.bio.length > 70 ? userData.bio.substring(0, 67) + '...' : userData.bio;
+                    }
+                }
+            }
+            
+            // Add hover effects to all cards
+            const cards = document.querySelectorAll('.profile-image-card, .user-info-card, .social-bio-card, .profile-details-card, .stat-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
+        });
+
+       
+    </script>
+</body>
+</html>
