@@ -79,6 +79,7 @@
                 <button 
                     type="submit" 
                     class="w-full cta-gradient text-white py-4 rounded-xl hover:opacity-90 transition-all font-medium text-lg"
+                    href="{{ url_for('landing01') }}"
                 >
                     Sign Up
                 </button>
@@ -87,7 +88,7 @@
             <div class="text-center mt-8">
                 <p class="text-white/70">
                     Already have an account? 
-                    <a href="login.html" class="text-purple-300 hover:underline font-semibold">Log In</a>
+                    <a href="{{ url_for('login') }}" class="text-purple-300 hover:underline font-semibold">Log In</a>
                 </p>
             </div>
 
