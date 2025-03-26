@@ -68,9 +68,18 @@
                 <div class="w-full aspect-square bg-white/10 rounded-2xl absolute inset-0 -rotate-6"></div>
                 <div class="w-full aspect-square bg-white/20 rounded-2xl absolute inset-0 rotate-6"></div>
                 <div class="relative z-10 rounded-2xl shadow-2xl overflow-hidden aspect-square bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
-                    <div class="text-center p-6">
-                        <span class="text-8xl">🤖</span>
-                        <p class="mt-4 text-white/80">Your AI Companion</p>
+                    <div class="text-center p-6 w-full h-full">
+                        <!-- Video (autoplay, loop, no controls) -->
+                        <video 
+                            autoplay 
+                            loop 
+                            muted 
+                            playsinline 
+                            class="w-full h-full object-cover"
+                        >
+                            <source src="{{ url_for('static', filename='video/edited_female.webm') }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                 </div>
             </div>
