@@ -1,19 +1,73 @@
+/* Updated landing01.css */
 body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
     background: linear-gradient(to bottom right, #1E3A8A, #6B7280);
     color: #FFFFFF;
-    height: 100vh;
+    min-height: 100vh;
+}
+
+/* Avatar Container */
+.avatar-container {
+    flex: 1;
+    min-width: 200px;
+    min-height: 300px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(circle, #3B82F6, #1E3A8A);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.avatar-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    position: absolute;
+}
+
+/* Remove the old avatar animations and pseudo-elements */
+.avatar::before {
+    content: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .left-section, .right-section {
+        width: 100%;
+    }
+    
+    .right-section {
+        flex-direction: column;
+    }
+    
+    .avatar-container {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+    }
+    
+    .life-story {
+        width: 100%;
+        margin-top: 20px;
+    }
 }
 
 .container {
     display: flex;
     width: 90%;
     max-width: 1200px;
-    height: 80vh;
+    height: calc(80vh - 80px); /* Subtract navbar height */
+    margin: 80px auto 20px; /* Add margin for navbar */
     background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
     overflow: hidden;
@@ -90,23 +144,6 @@ body {
     padding: 20px;
 }
 
-.avatar-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.avatar {
-    width: 200px;
-    height: 300px;
-    background: url('avatar.png'); /* Replace with actual avatar image or SVG */
-    background-size: cover;
-    position: relative;
-    border-radius: 50%;
-    background: linear-gradient(circle, #3B82F6, #1E3A8A);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-}
 
 .life-story {
     width: 300px;

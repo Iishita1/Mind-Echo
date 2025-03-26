@@ -4,7 +4,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='exercise.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/hourglass.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='hourglass.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -26,8 +26,21 @@
     <!-- Avatar Section -->
     <div class="avatar-section">
       <div class="avatar-container">
-        <img src="" alt="Wellness avatar" class="avatar-image">
-      </div>
+        <!-- Avatar will be an SVG or image with CSS animations -->
+        <div class="avatar">
+            <!-- Video (autoplay, loop, no controls) -->
+            <video 
+            autoplay 
+            loop 
+            muted 
+            playsinline 
+            class="w-full h-full object-cover"
+        >
+            <source src="{{ url_for('static', filename='video/edited_female.webm') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        </div>
+    </div>
     </div>
 
     <!-- Widgets Section -->

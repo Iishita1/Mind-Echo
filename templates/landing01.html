@@ -40,7 +40,19 @@
         <div class="right-section">
             <div class="avatar-container">
                 <!-- Avatar will be an SVG or image with CSS animations -->
-                <div class="avatar"></div>
+                <div class="avatar">
+                    <!-- Video (autoplay, loop, no controls) -->
+                    <video 
+                    autoplay 
+                    loop 
+                    muted 
+                    playsinline 
+                    class="w-full h-full object-cover"
+                >
+                    <source src="{{ url_for('static', filename='video/edited_female.webm') }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                </div>
             </div>
             <div class="life-story">
                 <h2>TODAY'S LIFE STORY</h2>

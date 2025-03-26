@@ -23,10 +23,10 @@
             </div>
             <div class="space-x-2 sm:space-x-4">
                 <button class="btn-ocean relative overflow-hidden bg-white/20 backdrop-blur-lg px-3 sm:px-4 py-2 rounded-full hover:bg-white/30 transition text-sm sm:text-base">
-                    <span class="relative z-10">Log In</span>
+                    <span class="relative z-10"><a href="{{ url_for('login') }}">Log In</a></span>
                 </button>
                 <button class="btn-ocean relative overflow-hidden bg-white/30 backdrop-blur-lg px-3 sm:px-4 py-2 rounded-full hover:bg-white/40 transition text-sm sm:text-base">
-                    <span class="relative z-10">Get Started</span>
+                    <span class="relative z-10"><a href="{{ url_for('signup') }}">Get Started</a></span>
                 </button>
             </div>
         </nav>

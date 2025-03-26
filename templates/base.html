@@ -6,16 +6,17 @@
     <title>{% block title %}MindEcho{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block css %}{% endblock %}
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">
             <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <span class="text-2xl">🧠</span>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-bold tracking-wider">MindEcho</h1>
+            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <span class="text-2xl" style="line-height: 1;">🧠</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-wider">MindEcho</h1>
             </div>
         </div>
         <ul class="nav-links">
@@ -25,7 +26,7 @@
             <li><a href="{{ url_for('exercise') }}">Exercise</a></li>
         </ul>
         <div class="user-section">
-            <span class="user-name">User Name</span>
+            <span class="user-name">Kashish</span>
             <div class="user-pic"></div>
             <div class="dropdown">
                 <div class="dropdown-content">
